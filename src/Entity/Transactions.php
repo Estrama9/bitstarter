@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\TipsRepository;
+use App\Repository\TransactionsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TipsRepository::class)]
-class Tips
+#[ORM\Entity(repositoryClass: TransactionsRepository::class)]
+class Transactions
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,11 +22,11 @@ class Tips
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tips_from')]
+    #[ORM\ManyToOne(inversedBy: 'transaction_from')]
     #[ORM\JoinColumn(nullable: false)]
     private ?users $from_user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tips_to')]
+    #[ORM\ManyToOne(inversedBy: 'transaction_to')]
     #[ORM\JoinColumn(nullable: false)]
     private ?users $to_user = null;
 

@@ -7,17 +7,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-class Users implements PasswordAuthenticatedUserInterface
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['username'])]
+class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -25,7 +27,7 @@ class Users implements PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
 
@@ -35,20 +37,20 @@ class Users implements PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Savings>
      */
-    #[ORM\OneToMany(targetEntity: Savings::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $savings;
+    #[ORM\OneToMany(targetEntity: Accounts::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $accounts;
 
     /**
-     * @var Collection<int, Tips>
+     * @var Collection<int, Transactions>
      */
-    #[ORM\OneToMany(targetEntity: Tips::class, mappedBy: 'from_user', orphanRemoval: true)]
-    private Collection $tips_from;
+    #[ORM\OneToMany(targetEntity: Transactions::class, mappedBy: 'from_user', orphanRemoval: true)]
+    private Collection $transaction_from;
 
     /**
-     * @var Collection<int, Tips>
+     * @var Collection<int, Transactions>
      */
-    #[ORM\OneToMany(targetEntity: Tips::class, mappedBy: 'to_user', orphanRemoval: true)]
-    private Collection $tips_to;
+    #[ORM\OneToMany(targetEntity: Transactions::class, mappedBy: 'to_user', orphanRemoval: true)]
+    private Collection $transaction_to;
 
     //#[ORM\Column]
     //private array $Roles = [];
@@ -58,9 +60,9 @@ class Users implements PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->savings = new ArrayCollection();
-        $this->tips_from = new ArrayCollection();
-        $this->tips_to = new ArrayCollection();
+        $this->accounts = new ArrayCollection();
+        $this->transaction_from = new ArrayCollection();
+        $this->transaction_to = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,6 +80,16 @@ class Users implements PasswordAuthenticatedUserInterface
         $this->email = $email;
 
         return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
     }
 
     public function getPassword(): ?string
@@ -119,27 +131,27 @@ class Users implements PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Savings>
      */
-    public function getSavings(): Collection
+    public function getAccounts(): Collection
     {
-        return $this->savings;
+        return $this->accounts;
     }
 
-    public function addSaving(Savings $saving): static
+    public function addAccount(Accounts $account): static
     {
-        if (!$this->savings->contains($saving)) {
-            $this->savings->add($saving);
-            $saving->setUser($this);
+        if (!$this->accounts->contains($account)) {
+            $this->accounts->add($account);
+            $account->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeSaving(Savings $saving): static
+    public function removeAccount(Accounts $account): static
     {
-        if ($this->savings->removeElement($saving)) {
+        if ($this->accounts->removeElement($account)) {
             // set the owning side to null (unless already changed)
-            if ($saving->getUser() === $this) {
-                $saving->setUser(null);
+            if ($account->getUser() === $this) {
+                $account->setUser(null);
             }
         }
 
@@ -149,27 +161,27 @@ class Users implements PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Tips>
      */
-    public function getTipsFrom(): Collection
+    public function getTransactionsFrom(): Collection
     {
-        return $this->tips_from;
+        return $this->transaction_from;
     }
 
-    public function addTipsFrom(Tips $tipsFrom): static
+    public function addTransactionsFrom(Transactions $transactionFrom): static
     {
-        if (!$this->tips_from->contains($tipsFrom)) {
-            $this->tips_from->add($tipsFrom);
-            $tipsFrom->setFromUser($this);
+        if (!$this->transaction_from->contains($transactionFrom)) {
+            $this->transaction_from->add($transactionFrom);
+            $transactionFrom->setFromUser($this);
         }
 
         return $this;
     }
 
-    public function removeTipsFrom(Tips $tipsFrom): static
+    public function removeTransactionsFrom(Transactions $transactionFrom): static
     {
-        if ($this->tips_from->removeElement($tipsFrom)) {
+        if ($this->transaction_from->removeElement($transactionFrom)) {
             // set the owning side to null (unless already changed)
-            if ($tipsFrom->getFromUser() === $this) {
-                $tipsFrom->setFromUser(null);
+            if ($transactionFrom->getFromUser() === $this) {
+                $transactionFrom->setFromUser(null);
             }
         }
 
@@ -179,31 +191,40 @@ class Users implements PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Tips>
      */
-    public function getTipsTo(): Collection
+    public function getTransactionsTo(): Collection
     {
-        return $this->tips_to;
+        return $this->transaction_to;
     }
 
-    public function addTipsTo(Tips $tipsTo): static
+    public function addTransactionsTo(Transactions $transactionTo): static
     {
-        if (!$this->tips_to->contains($tipsTo)) {
-            $this->tips_to->add($tipsTo);
-            $tipsTo->setToUser($this);
+        if (!$this->transaction_to->contains($transactionTo)) {
+            $this->transaction_to->add($transactionTo);
+            $transactionTo->setToUser($this);
         }
 
         return $this;
     }
 
-    public function removeTipsTo(Tips $tipsTo): static
+    public function removeTransactionsTo(Transactions $transactionTo): static
     {
-        if ($this->tips_to->removeElement($tipsTo)) {
+        if ($this->transaction_to->removeElement($transactionTo)) {
             // set the owning side to null (unless already changed)
-            if ($tipsTo->getToUser() === $this) {
-                $tipsTo->setToUser(null);
+            if ($transactionTo->getToUser() === $this) {
+                $transactionTo->setToUser(null);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getPlainPassword(): ?string {
@@ -238,4 +259,10 @@ class Users implements PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->username ?? (string) $this->getId();
+    }
+
 }

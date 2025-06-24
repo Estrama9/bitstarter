@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\SavingsRepository;
+use App\Repository\AccountsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Enum\AccountType;
+use Doctrine\DBAL\Types\Types;
 
-#[ORM\Entity(repositoryClass: SavingsRepository::class)]
-class Savings
+#[ORM\Entity(repositoryClass: AccountsRepository::class)]
+class Accounts
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,9 +21,12 @@ class Savings
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'savings')]
+    #[ORM\ManyToOne(inversedBy: 'accounts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?users $user = null;
+
+    #[ORM\Column(length: 255, type: Types::STRING, enumType: AccountType::class)]
+    private ?AccountType $type = null;
 
     public function getId(): ?int
     {
@@ -63,4 +68,18 @@ class Savings
 
         return $this;
     }
+
+
+    public function getType(): ?AccountType
+    {
+        return $this->type;
+    }
+
+    public function setType(?AccountType $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+
 }
