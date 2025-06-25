@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 
 class UsersCrudController extends AbstractCrudController
 {
@@ -32,6 +33,7 @@ class UsersCrudController extends AbstractCrudController
             ->setHelp('Laissez le champ ci-dessus vide pour conserver le mot de passe');
     }
 
+    yield BooleanField::new('is_verified')->setLabel('Verified');
     yield DateTimeField::new('created_at')->setLabel('Creation Date');
 }
 

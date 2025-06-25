@@ -6,12 +6,15 @@ use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['username'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['username'], message: 'This username is already taken')]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -35,7 +38,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
-     * @var Collection<int, Savings>
+     * @var Collection<int, Accounts>
      */
     #[ORM\OneToMany(targetEntity: Accounts::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $accounts;
@@ -58,11 +61,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    #[ORM\Column]
+    private bool $isVerified = false;
+
     public function __construct()
     {
         $this->accounts = new ArrayCollection();
         $this->transaction_from = new ArrayCollection();
         $this->transaction_to = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $this->roles = ['ROLE_USER']; // default role
     }
 
     public function getId(): ?int
@@ -129,7 +137,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Savings>
+     * @return Collection<int, Accounts>
      */
     public function getAccounts(): Collection
     {
@@ -159,7 +167,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Tips>
+     * @return Collection<int, Transactions>
      */
     public function getTransactionsFrom(): Collection
     {
@@ -263,6 +271,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->username ?? (string) $this->getId();
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
     }
 
 }

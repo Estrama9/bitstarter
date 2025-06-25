@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Transactions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -26,7 +27,9 @@ class TransactionsCrudController extends AbstractCrudController
         yield AssociationField::new('to_user')->setLabel('To');
         yield NumberField::new('amount_btc')->setLabel('BTC');;
         yield TextEditorField::new('message');
-        yield DateTimeField::new('created_at')->setLabel('Transaction Date');;
+        if ($pageName === Crud::PAGE_INDEX) {
+            yield DateTimeField::new('created_at')->setLabel('Creation Date');
+        }
     }
 
 }
