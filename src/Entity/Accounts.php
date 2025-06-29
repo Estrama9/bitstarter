@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Users;
 use App\Repository\AccountsRepository;
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\AccountType;
@@ -23,7 +24,7 @@ class Accounts
 
     #[ORM\ManyToOne(inversedBy: 'accounts')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?users $user = null;
+    private ?Users $user = null;
 
     #[ORM\Column(length: 255, type: Types::STRING, enumType: AccountType::class)]
     private ?AccountType $type = null;
@@ -62,12 +63,12 @@ class Accounts
         return $this;
     }
 
-    public function getUser(): ?users
+    public function getUser(): ?Users
     {
         return $this->user;
     }
 
-    public function setUser(?users $user): static
+    public function setUser(?Users $user): static
     {
         $this->user = $user;
 

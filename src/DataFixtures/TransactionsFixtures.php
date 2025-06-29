@@ -17,7 +17,7 @@ class TransactionsFixtures extends Fixture implements DependentFixtureInterface
         $tip1->setAmountBtc(0.1);
         $tip1->setFromUser($this->getReference(UsersFixtures::FIRST_USER, Users::class));
         $tip1->setToUser($this->getReference(UsersFixtures::SECOND_USER, Users::class));
-        $tip1->setMessage('for you contribution to the field');
+        $tip1->setMessage('for your contribution to the field');
         $tip1->setCreatedAt(new \DateTimeImmutable());
         $manager->persist($tip1);
 

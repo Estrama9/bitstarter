@@ -24,11 +24,11 @@ class Transactions
 
     #[ORM\ManyToOne(inversedBy: 'transaction_from')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?users $from_user = null;
+    private ?Users $from_user = null;
 
     #[ORM\ManyToOne(inversedBy: 'transaction_to')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?users $to_user = null;
+    private ?Users $to_user = null;
 
     public function __construct()
     {
@@ -76,24 +76,24 @@ class Transactions
         return $this;
     }
 
-    public function getFromUser(): ?users
+    public function getFromUser(): ?Users
     {
         return $this->from_user;
     }
 
-    public function setFromUser(?users $from_user): static
+    public function setFromUser(?Users $from_user): static
     {
         $this->from_user = $from_user;
 
         return $this;
     }
 
-    public function getToUser(): ?users
+    public function getToUser(): ?Users
     {
         return $this->to_user;
     }
 
-    public function setToUser(?users $to_user): static
+    public function setToUser(?Users $to_user): static
     {
         $this->to_user = $to_user;
 

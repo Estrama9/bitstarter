@@ -9,7 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 class UsersFixtures extends Fixture
 {
     const FIRST_USER = "first_user";
-    const SECOND_USER = 'second_user';
+    const SECOND_USER = "second_user";
     public function load(ObjectManager $manager): void
     {
         $user1 = new Users();

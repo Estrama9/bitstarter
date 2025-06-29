@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block H1 %}{{ computedBalance * 100000000 }} sats{% endblock %}
+
+{% block body %}
+<p class="d-flex justify-content-center mt-3">{{ computedBalance}} BTC</p>
+<p class="d-flex justify-content-center">{{ computedBalance * 90960.66 }} €</p>
+<div class="my-4" style="height: 5px;"></div>
+<div class="w-75 m-auto d-flex justify-content-center align-items-center gap-4">
+    <a class="flex-grow-1 text-decoration-none">
+        <div class="d-flex flex-column align-items-center justify-content-center
+         rounded border border-secondary bg-white text-secondary fw-medium px-4
+         py-4 transition cursor-pointer disabled cursor-default opacity-60
+         text-center text-wrap hover-bg-warning-subtle hover-border-primary
+         focus-outline-none focus-ring-2">
+            <img src="../img/sendBTC-64.png"></img>
+            Envoyer
+        </div>
+    </a>
+    <a class="flex-grow-1 text-decoration-none">
+        <div class="d-flex flex-column align-items-center justify-content-center
+         rounded border border-secondary bg-white text-secondary fw-medium px-4
+         py-4 transition cursor-pointer disabled cursor-default opacity-60
+         text-center text-wrap hover-bg-warning-subtle hover-border-primary
+         focus-outline-none focus-ring-2">
+            <img src="../img/buyBTC-64.png"></img>
+            Acheter
+        </div>
+    </a>
+    <a class="flex-grow-1 text-decoration-none">
+        <div class="d-flex flex-column align-items-center justify-content-center
+         rounded border border-secondary bg-white text-secondary fw-medium px-4
+         py-4 transition cursor-pointer disabled cursor-default opacity-60
+         text-center text-wrap hover-bg-warning-subtle hover-border-primary
+         focus-outline-none focus-ring-2">
+            <img src="../img/saveBTC-64.png"></img>
+            Épargner
+        </div>
+    </a>
+</div>
+<div class="my-4" style="height: 5px;"></div>
+{% for transaction in transactions %}
+<div>
+    <div class="w-75 m-auto d-flex gap-4">
+        {% if transaction.fromUser == app.user %}
+        <div class="d-flex align-items-center">
+            <img src="../img/outvoice-red-50.png">
+        </div>
+        <div class="d-flex align-items-center me-auto">{{ transaction.message }}</div>
+        <div class="d-flex align-items-center"  >-{{ transaction.amountBtc * 100000000 }} sats</div>
+        {% else %}
+    </div >
+    <div class="my-3" style="height: 5px;"></div>
+    <div class="w-75 m-auto d-flex gap-4">
+        <div class="d-flex align-items-center">
+            <img src="../img/invoice-green-50.png">
+        </div>
+        <div class="d-flex align-items-center me-auto">{{ transaction.message }}</div>
+        <div class="d-flex align-items-center">+{{ transaction.amountBtc * 100000000 }} sats</div>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

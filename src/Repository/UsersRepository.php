@@ -16,6 +16,19 @@ class UsersRepository extends ServiceEntityRepository
         parent::__construct($registry, Users::class);
     }
 
+
+    public function findUnconfirmedBefore(\DateTimeInterface $threshold): array
+{
+
+    return $this->createQueryBuilder('user')
+    ->where('user.isVerified = :confirmed')
+    ->andWhere('user.createdAt <= :threshold')
+    ->setParameter('confirmed', false)
+    ->setParameter('threshold', $threshold)
+    ->getQuery()
+    ->getResult();
+}
+
     //    /**
     //     * @return Users[] Returns an array of Users objects
     //     */

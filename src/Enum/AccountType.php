@@ -5,4 +5,6 @@ enum AccountType: string
 {
     case CHECKING = 'checking';
     case SAVINGS = 'savings';
+
 }
+

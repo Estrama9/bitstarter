@@ -57,7 +57,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         if (in_array('ROLE_USER', $roles, true)) {
-            return new RedirectResponse($this->urlGenerator->generate('app_profile'));
+            return new RedirectResponse($this->urlGenerator->generate('app_home'));
         }
 
         // Fallback
